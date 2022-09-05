@@ -1,0 +1,74 @@
+@font-face {
+  font-family: "Chaloops W00 Bd";
+  src: url("../assets/9186e96567fadf9c630b48d987ccd538.eot"); /* IE9*/
+  src: url("../assets/9186e96567fadf9c630b48d987ccd538.eot?#iefix")
+      format("embedded-opentype"),
+    /* IE6-IE8 */ url("../assets/9186e96567fadf9c630b48d987ccd538.woff2")
+      format("woff2"),
+    /* chrome、firefox */ url("../assets/9186e96567fadf9c630b48d987ccd538.woff")
+      format("woff"),
+    /* chrome、firefox */ url("../assets/9186e96567fadf9c630b48d987ccd538.ttf")
+      format("truetype"),
+    /* chrome、firefox、opera、Safari, Android, iOS 4.2+*/
+      // url("../assets/9186e96567fadf9c630b48d987ccd538.svg#Chaloops W00 Bd")
+    format("svg"); /* iOS 4.1- */
+  src: url("../assets/Chaloops\ W00\ Bd.otf");
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  list-style-type: none;
+  text-decoration: none;
+  font-family: "Chaloops W00 Bd", sans-serif;
+  -webkit-text-stroke: 1px black;
+  color: #fff;
+}
+
+body {
+  background-color: #c1ecff;
+  font-size: 18px;
+
+  @media screen and (min-width: 992px) {
+    overflow-y: hidden;
+  }
+}
+
+h3 {
+  font-size: 32px;
+
+  @media screen and (max-width: 575px) {
+    font-size: 26px;
+  }
+}
+
+.page-container {
+  max-width: 1100px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.section {
+  padding-left: 3rem !important;
+  padding-right: 3rem !important;
+
+  @media screen and (max-width: 575px) {
+    padding-left: 1.5rem !important;
+    padding-right: 1.5rem !important;
+  }
+}
+
+.btn {
+  cursor: pointer;
+
+  transition: 0.4s ease;
+
+  &:hover {
+    transform: translateY(-4px);
+  }
+}
+
+.c-pointer {
+  cursor: pointer;
+}

@@ -1,0 +1,5 @@
+export const SET_WALLET_ADDR = "SET_WALLET_ADDR";
+export const SET_CHAIN_ID = "SET_CHAIN_ID";
+export const UPDATE_USER_BALANCE = "UPDATE_USER_BALANCE";
+export const UPDATE_WEB3 = "UPDATE_WEB3";
+export const UPDATE_USER_NFTS = "UPDATE_USER_NFTS";
