@@ -93,9 +93,10 @@ export const doPublicMint = async (globalWeb3, accountStr, numberOfNFTs, salePri
 	}
 	// let numberOfMinting = globalWeb3.utils.toWei(numberOfNFTs.toString(), "ether");
 	// console.log("numberOfMinting = ", numberOfMinting );
-	try {
+	try 
+	{
 		let funcTrx = publicSaleContract.methods.publicSale(numberOfNFTs);
-		let nativeValue = globalWeb3.utils.toWei(numberOfNFTs*salePrice, "ether");
+		let nativeValue = globalWeb3.utils.toWei((Number(numberOfNFTs)*Number(salePrice)).toString(), "ether");
 		await funcTrx.estimateGas({
 			from: accountStr,
 			value: nativeValue.toString()
