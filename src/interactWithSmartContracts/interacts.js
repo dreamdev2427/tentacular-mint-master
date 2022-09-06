@@ -79,7 +79,7 @@ export const bound = async (globalWeb3, accountStr, tokenId) => {
 	}
 }
 
-export const doPublicMint = async (globalWeb3, accountStr, numberOfNFTs) => {
+export const doPublicMint = async (globalWeb3, accountStr, numberOfNFTs, salePrice) => {
 	let publicSaleContract;
 	try {
 		publicSaleContract = new globalWeb3.eth.Contract(saleContractABI, SALE_CONTRACT_ADDRESS);
@@ -95,12 +95,15 @@ export const doPublicMint = async (globalWeb3, accountStr, numberOfNFTs) => {
 	// console.log("numberOfMinting = ", numberOfMinting );
 	try {
 		let funcTrx = publicSaleContract.methods.publicSale(numberOfNFTs);
+		let nativeValue = globalWeb3.utils.toWei(numberOfNFTs*salePrice, "ether");
 		await funcTrx.estimateGas({
-			from: accountStr
+			from: accountStr,
+			value: nativeValue.toString()
 		});
 		await funcTrx.send({
 			from: accountStr,
-			gasPrice: 10 * (10 ** 9)
+			gasPrice: 10 * (10 ** 9),			
+			value: nativeValue.toString()
 		})
 		return {
 			success: true,

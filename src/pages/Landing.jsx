@@ -79,12 +79,11 @@ const Landing = () => {
       }
       try{
         let returnObject = {};
-        returnObject = await doPublicMint(globalWeb3, globalAccount, numberState);
+        returnObject = await doPublicMint(globalWeb3, globalAccount, numberState, publicSalePrice);
         if(returnObject.success === false) { 
           NotificationManager.warning(returnObject.message, 'Error', 5000, () => {});
         }
       }catch(err){
-
       }
     }
   }
