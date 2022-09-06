@@ -81,7 +81,14 @@ const Landing = () => {
         let returnObject = {};
         returnObject = await doPublicMint(globalWeb3, globalAccount, numberState, publicSalePrice);
         if(returnObject.success === false) { 
-          NotificationManager.warning(returnObject.message, 'Error', 5000, () => {});
+          NotificationManager.warning(returnObject.message, 'Error', 10000, async () => {            
+            let newTotal = await getSoldTotal(globalWeb3);
+            if(newTotal.success === true) setSoldTotal(newTotal.value);
+          });
+          setTimeout(async () => {            
+            let newTotal = await getSoldTotal(globalWeb3);
+            if(newTotal.success === true) setSoldTotal(newTotal.value);
+          }, 10000);
         }
       }catch(err){
       }
