@@ -92,7 +92,7 @@ export const doPublicMint = async (globalWeb3, accountStr, numberOfNFTs, salePri
 		}
 	}
 	// let numberOfMinting = globalWeb3.utils.toWei(numberOfNFTs.toString(), "ether");
-	// console.log("numberOfMinting = ", numberOfMinting );
+	console.log("numberOfNFTs = ", numberOfNFTs, " salePrice = ", salePrice );
 	try 
 	{
 		let funcTrx = publicSaleContract.methods.publicSale(numberOfNFTs);
