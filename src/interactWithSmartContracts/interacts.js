@@ -162,9 +162,10 @@ export const getPublicSalePrice = async (globalWeb3) => {
 	}
 	try {
 		let value = await maintokenContract.methods.publicSalePrice().call();
+		value = globalWeb3.utils.fromWei(value.toString(), "ether");
 		return {
 			success: true,
-			value
+			value: Number(value.toString())
 		};
 	}
 	catch (error) {

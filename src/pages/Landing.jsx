@@ -36,10 +36,10 @@ const Landing = () => {
       Promise.all(promiseArr)
       .then((values) => {
         if(values[0].success === true) setSoldTotal(values[0].value);
-        if(values[1].success === true) setPublicSalePrice(values[0].value);
-        if(values[2].success === true) setAlSalePrice(values[0].value);
-        if(values[3].success === true) setAlDayOneSalePrice(values[0].value);
-        if(values[4].success === true) setMaxPerWallet(values[0].value);
+        if(values[1].success === true) setPublicSalePrice(values[1].value);
+        if(values[2].success === true) setAlSalePrice(values[2].value);
+        if(values[3].success === true) setAlDayOneSalePrice(values[3].value);
+        if(values[4].success === true) setMaxPerWallet(values[4].value);
       })
       .catch((error) => {
 
