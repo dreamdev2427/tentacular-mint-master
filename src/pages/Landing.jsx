@@ -80,19 +80,23 @@ const Landing = () => {
       try{
         let returnObject = {};
         returnObject = await doPublicMint(globalWeb3, globalAccount, numberState, publicSalePrice);
-        if(returnObject.success === false) { 
-          NotificationManager.warning(returnObject.message, 'Error', 10000, async () => {            
-            let newTotal = await getSoldTotal(globalWeb3);
-            if(newTotal.success === true) setSoldTotal(newTotal.value);
-          });
-          setTimeout(async () => {            
-            let newTotal = await getSoldTotal(globalWeb3);
-            if(newTotal.success === true) setSoldTotal(newTotal.value);
+        if(returnObject.success === true) { 
+          NotificationManager.success("You 've successfully minted some NFTs.", 'Success', 10000, updateTotal() );
+          setTimeout( () => { 
+            updateTotal();
           }, 10000);
+        }else{
+          NotificationManager.warning(returnObject.message, 'Error', 10000, async () => {      
+          });
         }
       }catch(err){
       }
     }
+  }
+
+  const updateTotal = async () => {        
+    let newTotal = await getSoldTotal(globalWeb3);
+    if(newTotal.success === true) setSoldTotal(newTotal.value);
   }
 
   return (
