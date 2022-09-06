@@ -20,8 +20,8 @@ export const MAIN_TOKEN_ADDRESS = "0xa38a5f4E3cE1d3Fef0cd6a91Ef8e0415dee20dA1"; 
 //test 0xa38a5f4E3cE1d3Fef0cd6a91Ef8e0415dee20dA1 
 //main 
 
-export const SALE_CONTRACT_ADDRESS = "0x2B18e26d256BC89668cf98157C88A9EF196Be200"; //Sale smart contract for Tentacular on Ethereum
-//test 0x2B18e26d256BC89668cf98157C88A9EF196Be200
+export const SALE_CONTRACT_ADDRESS = "0x8786914e9129DC0C028fd5695800175669001D0F"; //Sale smart contract for Tentacular on Ethereum
+//test 0x8786914e9129DC0C028fd5695800175669001D0F
 //main 
 
 /*---------------------------------------------
