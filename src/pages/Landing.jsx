@@ -136,7 +136,7 @@ const Landing = () => {
               <div className="minted">{soldTotal || 0}/5,5556 Minted</div>
 
               <div className="d-flex align-items-center justify-content-center gap-3">
-                <div>Price:</div> <h3>{publicSalePrice || 0} ETH</h3>
+                <div>Price:</div> <h3>{(Number(publicSalePrice) * Number(numberState)).toFixed(2) || 0} ETH</h3>
               </div>
             </div>
 
