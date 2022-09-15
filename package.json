@@ -33,8 +33,7 @@
     "web3modal": "^1.9.9"
   },
   "scripts": {
-    "start": "react-app-rewired start",
-    "build": "react-app-rewired build",
+    "start": "react-app-rewired start","build": "set \"GENERATE_SOURCEMAP=false\" && react-app-rewired build && gulp licenses",
     "test": "react-app-rewired test",
     "eject": "react-app-rewired eject"
   },
