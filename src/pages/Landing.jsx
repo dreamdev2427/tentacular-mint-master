@@ -104,7 +104,7 @@ const Landing = () => {
       <div className="section" id="main">
         <div className="page-container">
           <div className="d-flex justify-content-center">
-            <div className="heading">Public Sale</div>
+            <div className="heading">WL Sale</div>
           </div>
 
           <div className="mint-box">

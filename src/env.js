@@ -1,18 +1,18 @@
 export const BACKEND_URL = "https://berryjuicer.com";
 
-const ETHEREUM_RPC_URL = "https://nd-061-599-676.p2pify.com/30f7f6297152feda1c8fde33932ea239";
+export const ETHEREUM_RPC_URL = "https://nd-061-599-676.p2pify.com/30f7f6297152feda1c8fde33932ea239";
 //Goerli  https://nd-061-599-676.p2pify.com/30f7f6297152feda1c8fde33932ea239
 //main https://mainnet.infura.io/v3/
 
-const ETHEREUM_CHAIN_ID = 5;
+export const ETHEREUM_CHAIN_ID = 5;
 //Goerli 5 0x5
 //MAIN 1 0x1
 
-const POLYGON_RPC_URL = "https://nd-919-882-597.p2pify.com/b954e1d27ce8e0a24312ee4b1c5348ec";
+export const POLYGON_RPC_URL = "https://nd-919-882-597.p2pify.com/b954e1d27ce8e0a24312ee4b1c5348ec";
 //mumbai https://nd-919-882-597.p2pify.com/b954e1d27ce8e0a24312ee4b1c5348ec
 //main https://polygon-rpc.com
 
-const POLYGON_CHAIN_ID = 80001;
+export const POLYGON_CHAIN_ID = 80001;
 //Mumbai 80001 0x13881
 //main 137 0x89
 
