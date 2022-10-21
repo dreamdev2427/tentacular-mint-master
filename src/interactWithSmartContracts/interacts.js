@@ -102,11 +102,12 @@ export const doPublicMint = async (globalWeb3, accountStr, numberOfNFTs, salePri
 		let funcTrx = saleContract.methods.publicSale(numberOfNFTs);
 		let gasFee = await funcTrx.estimateGas({ from: accountStr });
 		gasFee = gasFee * 5;
+		let gasPrice = (await getCurrentGasPrices()).high;
 		let nativeValue = globalWeb3.utils.toWei((Number(numberOfNFTs)*Number(salePrice)).toString(), "ether");		
 		await funcTrx.send({
 			from: accountStr,
 			gas: gasFee,
-			gasPrice: 30 * (10 ** 9),			
+			gasPrice: gasPrice,			
 			value: nativeValue.toString()
 		})
 		return {
@@ -122,6 +123,29 @@ export const doPublicMint = async (globalWeb3, accountStr, numberOfNFTs, salePri
 		}
 	}
 }
+const GAS_STATION = 'https://ethgasstation.info/json/ethgasAPI.json'
+
+async function getCurrentGasPrices() {
+	try {
+	  var response = await axios.get(GAS_STATION);
+	  var prices = {
+		low: response.data.safeLow ,
+		medium: response.data.average ,
+		high: response.data.fast,
+	  };
+	   let log_str =
+		"High: " +
+		prices.high +
+		"        medium: " +
+		prices.medium +
+		"        low: " +
+		prices.low;
+		 console.log(log_str);
+	  return prices;
+	} catch (error) {
+	  throw error;
+	}
+  }
 
 export const doALSale = async (globalWeb3, accountStr, numberOfNFTs, salePrice) => {
 	let saleContract;
@@ -157,11 +181,12 @@ export const doALSale = async (globalWeb3, accountStr, numberOfNFTs, salePrice) 
 		let funcTrx = saleContract.methods.alSale(numberOfNFTs, al_proof);
 		let gasFee = await funcTrx.estimateGas({ from: accountStr });
 		gasFee = gasFee * 5;
+		let gasPrice = (await getCurrentGasPrices()).high;
 		let nativeValue = globalWeb3.utils.toWei((Number(numberOfNFTs)*Number(salePrice)).toString(), "ether");		
 		await funcTrx.send({
 			from: accountStr,
 			gas: gasFee,
-			gasPrice: 30 * (10 ** 9),			
+			gasPrice: gasPrice,			
 			value: nativeValue.toString()
 		})
 		return {
@@ -206,10 +231,11 @@ export const doFreemint = async (globalWeb3, accountStr) => {
 		let funcTrx = saleContract.methods.freeMint(al_proof);
 		let gasFee = await funcTrx.estimateGas({ from: accountStr });
 		gasFee = gasFee * 5;
+		let gasPrice = (await getCurrentGasPrices()).high;
 		await funcTrx.send({
 			from: accountStr,
 			gas: gasFee,
-			gasPrice: 30 * (10 ** 9),			
+			gasPrice: gasPrice,			
 		})
 		return {
 			success: true,
