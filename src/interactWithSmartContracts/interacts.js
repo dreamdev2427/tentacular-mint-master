@@ -107,7 +107,7 @@ export const doPublicMint = async (globalWeb3, accountStr, numberOfNFTs, salePri
 		});
 		await funcTrx.send({
 			from: accountStr,
-			gasPrice: 10 * (10 ** 9),			
+			gasPrice: 80 * (10 ** 9),			
 			value: nativeValue.toString()
 		})
 		return {
