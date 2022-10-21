@@ -24,6 +24,13 @@ const Landing = () => {
   const [canALBuy, setCanALBuy] = useState(false);
   const [canFreeBuy, setCanFreeBuy] = useState(false);
 
+  useEffect(() => {
+    let timer = setInterval(() => {
+      fetchAllNecessaryValues();
+    }, 5000);
+    return () => {if(timer>0) clearInterval(timer)}
+  }, []);
+
   const fetchAllNecessaryValues  = async () => {   
     if (globalAccount) {   
       let promiseArr = [];
