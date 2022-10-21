@@ -196,7 +196,9 @@ const Landing = () => {
 
           <div className="mint-box">
             <div className="nft-container">
-              <img src="/Blue_Berries.gif" alt="nft" />
+            <video width="320" height="240"  autoPlay={true} muted loop={true} >
+              <source src="/Blue_Berries.mp4" type="video/mp4" ></source>
+            </video>
             </div>
 
             <div className="number-wrap">
@@ -223,7 +225,7 @@ const Landing = () => {
               <div className="minted">{soldTotal || 0}/5,556 Minted</div>
 
               <div className="d-flex align-items-center justify-content-center gap-3">
-                <div>Price:</div> <h3>{(Number(alSalePrice) * Number(numberState)).toFixed(2) || 0} ETH</h3>
+                <div>Price:</div> <h3>{(Number(alSalePrice) * Number(numberState)).toFixed(4) || 0} ETH</h3>
               </div>
             </div>
 
