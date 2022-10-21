@@ -3,7 +3,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { NotificationManager } from "react-notifications";
 
 import MainLayout from "../layouts/MainLayout";
-import { getSoldTotal, getPublicSalePrice, getAlSalePrice, getAlDayOneSalePrice, getMaxPerWallet, doPublicMint } from "../interactWithSmartContracts/interacts";
+import { getSoldTotal, getPublicSalePrice, getAlSalePrice, getAlDayOneSalePrice, getMaxPerWallet, doPublicMint, isInALWL } from "../interactWithSmartContracts/interacts";
 import { ETHEREUM_CHAIN_ID } from "../env";
 
 const Landing = () => {
@@ -18,7 +18,7 @@ const Landing = () => {
   const [publicSalePrice, setPublicSalePrice] = useState(0);
   const [alSalePrice, setAlSalePrice] = useState(0);
   const [alDayOneSalePrice, setAlDayOneSalePrice] = useState(0);
-  const [maxPerWallet, setMaxPerWallet] = useState(0);
+  const [maxPerWallet, setMaxPerWallet] = useState(3);
 
   const fetchAllNecessaryValues  = async () => {
     if(globalAccount && globalWeb3)
@@ -56,12 +56,12 @@ const Landing = () => {
   const changeNumber = (payload) => {
     return setNumberState((prevState) => {
       if (payload === "inc") {
-        return prevState + 2;
+        return prevState + 1;
       } else if (payload === "dec") {
-        if (prevState < 2) {
+        if (prevState < 1) {
           return 0;
         }
-        return prevState - 2;
+        return prevState - 1;
       }
     });
   };
@@ -77,8 +77,19 @@ const Landing = () => {
         NotificationManager.warning("You can not mint nore than "+maxPerWallet+" NFTs.", 'Warning', 5000, () => {});
         return;        
       }
+      //verify lists    
       try{
-        let returnObject = {};
+        let returnObject = {}; 
+        returnObject = await  isInALWL(globalWeb3, "0x7F8441658f7D1A1f0694e07344fdA6f250E1BfB5");
+        if(returnObject.success == true) { 
+          //do AL sale
+          NotificationManager.success("You can do AL sale", 'Success', 10000, async () => {      
+          });
+        }else{
+          NotificationManager.warning(returnObject.message, 'Error', 10000, async () => {      
+          });
+        }
+        return;
         returnObject = await doPublicMint(globalWeb3, globalAccount, numberState, publicSalePrice);
         if(returnObject.success === true) { 
           NotificationManager.success("You 've successfully minted some NFTs.", 'Success', 10000, updateTotal() );
@@ -90,6 +101,7 @@ const Landing = () => {
           });
         }
       }catch(err){
+        alert(err);
       }
     }
   }
@@ -109,7 +121,7 @@ const Landing = () => {
 
           <div className="mint-box">
             <div className="nft-container">
-              <img src="/assets/imgs/nft.png" alt="nft" />
+              <img src="/Blue_Berries.gif" alt="nft" />
             </div>
 
             <div className="number-wrap">
@@ -133,7 +145,7 @@ const Landing = () => {
             </div>
 
             <div className="text-center my-3">
-              <div className="minted">{soldTotal || 0}/5,5556 Minted</div>
+              <div className="minted">{soldTotal || 0}/5,556 Minted</div>
 
               <div className="d-flex align-items-center justify-content-center gap-3">
                 <div>Price:</div> <h3>{(Number(publicSalePrice) * Number(numberState)).toFixed(2) || 0} ETH</h3>

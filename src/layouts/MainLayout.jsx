@@ -1,15 +1,31 @@
 import React, { useState, useEffect } from "react";
 import Web3 from "web3";
 import Web3Modal from "web3modal";
+import WalletConnect from "@walletconnect/web3-provider";
 import { useDispatch, useSelector } from "react-redux";
 import { NotificationManager } from "react-notifications";
 import { setConnectedChainId, setConnectedWalletAddress, updateGlobalWeb3 } from "../store/actions/auth.actions";
 import { ETHEREUM_CHAIN_ID } from "../env";
 
+const providerOptions = {
+  // Example with WalletConnect provider
+  walletconnect: {
+    display: {
+      name: "Wallet Connect",
+      description: "Scan qrcode with your mobile wallet"
+    },
+    package: WalletConnect,
+    options: {
+      infuraId: "9dd88b07c58d4af3998955cf0808a9e9" // required
+    }
+  }
+};
+
 const web3Modal = new Web3Modal({
   network: "mainnet",
   cachProvider: true,
   theme: "dark",
+  providerOptions
 });
 
 const MainLayout = ({ children }) => {

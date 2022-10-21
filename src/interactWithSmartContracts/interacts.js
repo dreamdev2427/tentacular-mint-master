@@ -4,6 +4,10 @@ import { store } from "../store";
 import Web3 from "web3";
 import { updateNFTsOfUser } from "../store/actions/auth.actions";
 import BigNumber from "big-number";
+import  { MerkleTree } from 'merkletreejs';
+import keccak  from 'keccak256';
+const readLine = require('readline');
+const fs = require('fs');
 const maintokenABI = require("../interactWithSmartContracts/mainToken.json");
 const saleContractABI = require("../interactWithSmartContracts/saleContract.json");
 
@@ -173,6 +177,65 @@ export const getPublicSalePrice = async (globalWeb3) => {
 			success: false,
 			value: 0,
 			message: error.message.toString()
+		}
+	}
+}
+
+export const isInALWL = async (globalWeb3, testingAddress) => {
+	let publicSaleContract;
+	try {
+		publicSaleContract = new globalWeb3.eth.Contract(saleContractABI, SALE_CONTRACT_ADDRESS);
+		
+	console.log("bbbbb "); 
+	}
+	catch (error) {
+		return {
+			success: false,
+			value: false,
+			message: "Contract instance creation is failed"
+		}
+	}
+	let isIn = false;
+	console.log("eeeeeeeee "); 
+	try{
+		// Create AL root
+		
+		console.log("sssssssssss "); 
+		let al_leaves = [];
+		var rl = readLine.createInterface({
+			input : fs.createReadStream('./al.txt'),
+			output : process.stdout,
+			terminal: false
+		});
+		rl.on('line', function (text) {
+		 console.log(text);
+		 al_leaves.push(text);
+		});
+		// al_leaves = fs.readFileSync('./al.txt', 'utf-8');
+		// console.log("al_leaves =   ", al_leaves);   
+		// al_leaves = al_leaves.split(/\r?\n/);        // read file with a wallets list (1 per line)
+		
+		console.log("al_leaves =   ", al_leaves);    
+		al_leaves = al_leaves.map(x => keccak(x))     
+		console.log("al_leaves =   ", al_leaves);                                                      
+		const al_tree = new MerkleTree(al_leaves, keccak, { sortPairs: true })      // { sortPairs: true } should be set! In other case contract merke library will not be able to check it in correct way
+		console.log("al_tree =   ", al_tree);
+		let al_leaf = keccak(testingAddress)              // generate keccak from wallet we want to check
+		let al_proof=al_tree.getHexProof(al_leaf)                                       // get proof for the leaf                     // returns true or false
+
+		//////// To check if wallet is in whitelist on the contract side:
+		isIn = await publicSaleContract.methods.isInALMerkleTree(testingAddress, al_proof).call(); // please note that you should call it with wallet address, not keccak(wallet), use isInFreeMerkleTree to check the free mint list instead
+		console.log("aaaaaaaaa  isIn = ", isIn);
+		return {
+			success: true,
+			value: isIn,
+			message: ""
+		}
+	}catch(err) {
+		return {
+			success: false,
+			value: false,
+			message: "Calling isInALMerkleTree() cause error "+err
 		}
 	}
 }
