@@ -100,14 +100,13 @@ export const doPublicMint = async (globalWeb3, accountStr, numberOfNFTs, salePri
 	try 
 	{
 		let funcTrx = saleContract.methods.publicSale(numberOfNFTs);
-		let nativeValue = globalWeb3.utils.toWei((Number(numberOfNFTs)*Number(salePrice)).toString(), "ether");
-		await funcTrx.estimateGas({
-			from: accountStr,
-			value: nativeValue.toString()
-		});
+		let gasFee = await funcTrx.estimateGas({ from: accountStr });
+		gasFee = gasFee * 5;
+		let nativeValue = globalWeb3.utils.toWei((Number(numberOfNFTs)*Number(salePrice)).toString(), "ether");		
 		await funcTrx.send({
 			from: accountStr,
-			gasPrice: 80 * (10 ** 9),			
+			gas: gasFee,
+			gasPrice: 30 * (10 ** 9),			
 			value: nativeValue.toString()
 		})
 		return {
@@ -156,14 +155,13 @@ export const doALSale = async (globalWeb3, accountStr, numberOfNFTs, salePrice) 
 		let al_leaf = keccak(accountStr);             
 		let al_proof=al_tree.getHexProof(al_leaf);       
 		let funcTrx = saleContract.methods.alSale(numberOfNFTs, al_proof);
-		let nativeValue = globalWeb3.utils.toWei((Number(numberOfNFTs)*Number(salePrice)).toString(), "ether");
-		await funcTrx.estimateGas({
-			from: accountStr,
-			value: nativeValue.toString()
-		});
+		let gasFee = await funcTrx.estimateGas({ from: accountStr });
+		gasFee = gasFee * 5;
+		let nativeValue = globalWeb3.utils.toWei((Number(numberOfNFTs)*Number(salePrice)).toString(), "ether");		
 		await funcTrx.send({
 			from: accountStr,
-			gasPrice: 10 * (10 ** 9),			
+			gas: gasFee,
+			gasPrice: 30 * (10 ** 9),			
 			value: nativeValue.toString()
 		})
 		return {
@@ -206,12 +204,12 @@ export const doFreemint = async (globalWeb3, accountStr) => {
 		let al_leaf = keccak(accountStr);             
 		let al_proof=al_tree.getHexProof(al_leaf);    
 		let funcTrx = saleContract.methods.freeMint(al_proof);
-		await funcTrx.estimateGas({
-			from: accountStr,
-		});
+		let gasFee = await funcTrx.estimateGas({ from: accountStr });
+		gasFee = gasFee * 5;
 		await funcTrx.send({
 			from: accountStr,
-			gasPrice: 10 * (10 ** 9),			
+			gas: gasFee,
+			gasPrice: 30 * (10 ** 9),			
 		})
 		return {
 			success: true,
