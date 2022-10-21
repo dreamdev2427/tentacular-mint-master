@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from "react";
-import { useDispatch, useSelector } from "react-redux";
+import { useSelector } from "react-redux";
 import { NotificationManager } from "react-notifications";
 
 import MainLayout from "../layouts/MainLayout";
-import { getSoldTotal, getPublicSalePrice, getAlSalePrice, getAlDayOneSalePrice, getMaxPerWallet, doPublicMint, isInALWL, getMintedByWallet, isInFLWL, doALSale, doFreemint } from "../interactWithSmartContracts/interacts";
+import { getSoldTotal, getPublicSalePrice, getAlSalePrice, getAlDayOneSalePrice, getMaxPerWallet, isInALWL, getMintedByWallet, isInFLWL, doALSale, doFreemint } from "../interactWithSmartContracts/interacts";
 import { ETHEREUM_CHAIN_ID } from "../env";
 
 const Landing = () => {
@@ -11,7 +11,6 @@ const Landing = () => {
   const globalAccount = useSelector((state) => state.auth.currentWallet);
   const globalWeb3 = useSelector((state) => state.auth.globalWeb3);
   const globalChainId = useSelector(state => state.auth.currentChainId);
-  const dispatch = useDispatch();
 
   const [numberState, setNumberState] = useState(0);
   const [soldTotal, setSoldTotal] = useState(0);
@@ -69,7 +68,7 @@ const Landing = () => {
         if(values[7].success === true) setCanFreeBuy(values[7].value);
       })
       .catch((error) => {
-
+        console.log(error)
       })
     }
   }
@@ -111,13 +110,6 @@ const Landing = () => {
         NotificationManager.warning("You can not mint more than 2 NFTs", 'Warning', 5000, () => {});
         return;        
       }
-      //verify lists    
-      /* /////////
-      getMintedByWallet(wallet) will return you uint[2]
-      [0] - minted on public + minted on AL stage
-      [1] - minted on free mint
-      3 in total - max
-      ///////// */
       try{
         let returnObject = {}; 
         returnObject = await  isInALWL(globalWeb3, globalAccount);
@@ -157,13 +149,6 @@ const Landing = () => {
         NotificationManager.warning("You can not mint more than 1 NFT on free", 'Warning', 5000, () => {});
         return;        
       }
-      //verify lists    
-      /* /////////
-      getMintedByWallet(wallet) will return you uint[2]
-      [0] - minted on public + minted on AL stage
-      [1] - minted on free mint
-      3 in total - max
-      ///////// */
       try{
         let returnObject = {}; 
         returnObject = await  isInFLWL(globalWeb3, globalAccount);
