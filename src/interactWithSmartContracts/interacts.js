@@ -230,7 +230,7 @@ export const doFreemint = async (globalWeb3, accountStr) => {
 export const getSoldTotal = async (globalWeb3) => {
 	let maintokenContract, value = 0;
 	try {
-		maintokenContract = new ethWeb3.eth.Contract(saleContractABI, SALE_CONTRACT_ADDRESS);
+		maintokenContract = new globalWeb3.eth.Contract(maintokenABI, MAIN_TOKEN_ADDRESS);
 	}
 	catch (error) {
 		return {
@@ -240,7 +240,8 @@ export const getSoldTotal = async (globalWeb3) => {
 		}
 	}
 	try {
-		value = await maintokenContract.methods.soldTotal().call();
+		value = await maintokenContract.methods.totalSupply().call();		
+		console.log(value)	
 	}
 	catch (error) {
 		return {
