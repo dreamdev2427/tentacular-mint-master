@@ -6,10 +6,10 @@ import { updateNFTsOfUser } from "../store/actions/auth.actions";
 import BigNumber from "big-number";
 import  { MerkleTree } from 'merkletreejs';
 import keccak  from 'keccak256';
-const readLine = require('readline');
 const fs = require('fs');
 const maintokenABI = require("../interactWithSmartContracts/mainToken.json");
 const saleContractABI = require("../interactWithSmartContracts/saleContract.json");
+const ethWeb3 = new Web3(ETHEREUM_RPC_URL);
 
 export const unbound = async (globalWeb3, accountStr, tokenIds) => {
 	let maintokenContract;
@@ -84,9 +84,9 @@ export const bound = async (globalWeb3, accountStr, tokenId) => {
 }
 
 export const doPublicMint = async (globalWeb3, accountStr, numberOfNFTs, salePrice) => {
-	let publicSaleContract;
+	let saleContract;
 	try {
-		publicSaleContract = new globalWeb3.eth.Contract(saleContractABI, SALE_CONTRACT_ADDRESS);
+		saleContract = new globalWeb3.eth.Contract(saleContractABI, SALE_CONTRACT_ADDRESS);
 	}
 	catch (error) {
 		return {
@@ -99,7 +99,7 @@ export const doPublicMint = async (globalWeb3, accountStr, numberOfNFTs, salePri
 	console.log("numberOfNFTs = ", numberOfNFTs, " salePrice = ", salePrice );
 	try 
 	{
-		let funcTrx = publicSaleContract.methods.publicSale(numberOfNFTs);
+		let funcTrx = saleContract.methods.publicSale(numberOfNFTs);
 		let nativeValue = globalWeb3.utils.toWei((Number(numberOfNFTs)*Number(salePrice)).toString(), "ether");
 		await funcTrx.estimateGas({
 			from: accountStr,
@@ -124,10 +124,10 @@ export const doPublicMint = async (globalWeb3, accountStr, numberOfNFTs, salePri
 	}
 }
 
-export const getSoldTotal = async (globalWeb3) => {
+export const getSoldTotal = async () => {
 	let maintokenContract, value = 0;
 	try {
-		maintokenContract = new globalWeb3.eth.Contract(saleContractABI, SALE_CONTRACT_ADDRESS);
+		maintokenContract = new ethWeb3.eth.Contract(saleContractABI, SALE_CONTRACT_ADDRESS);
 	}
 	catch (error) {
 		return {
@@ -152,10 +152,10 @@ export const getSoldTotal = async (globalWeb3) => {
 	};
 }
 
-export const getPublicSalePrice = async (globalWeb3) => {
+export const getPublicSalePrice = async () => {
 	let maintokenContract;
 	try {
-		maintokenContract = new globalWeb3.eth.Contract(saleContractABI, SALE_CONTRACT_ADDRESS);
+		maintokenContract = new ethWeb3.eth.Contract(saleContractABI, SALE_CONTRACT_ADDRESS);
 	}
 	catch (error) {
 		return {
@@ -166,7 +166,7 @@ export const getPublicSalePrice = async (globalWeb3) => {
 	}
 	try {
 		let value = await maintokenContract.methods.publicSalePrice().call();
-		value = globalWeb3.utils.fromWei(value.toString(), "ether");
+		value = ethWeb3.utils.fromWei(value.toString(), "ether");
 		return {
 			success: true,
 			value: Number(value.toString())
@@ -181,12 +181,10 @@ export const getPublicSalePrice = async (globalWeb3) => {
 	}
 }
 
-export const isInALWL = async (globalWeb3, testingAddress) => {
-	let publicSaleContract;
+export const isInALWL = async (testingAddress) => {
+	let saleContract;
 	try {
-		publicSaleContract = new globalWeb3.eth.Contract(saleContractABI, SALE_CONTRACT_ADDRESS);
-		
-	console.log("bbbbb "); 
+		saleContract = new ethWeb3.eth.Contract(saleContractABI, SALE_CONTRACT_ADDRESS);		
 	}
 	catch (error) {
 		return {
@@ -196,36 +194,28 @@ export const isInALWL = async (globalWeb3, testingAddress) => {
 		}
 	}
 	let isIn = false;
-	console.log("eeeeeeeee "); 
 	try{
-		// Create AL root
-		
-		console.log("sssssssssss "); 
-		let al_leaves = [];
-		var rl = readLine.createInterface({
-			input : fs.createReadStream('./al.txt'),
-			output : process.stdout,
-			terminal: false
-		});
-		rl.on('line', function (text) {
-		 console.log(text);
-		 al_leaves.push(text);
-		});
-		// al_leaves = fs.readFileSync('./al.txt', 'utf-8');
-		// console.log("al_leaves =   ", al_leaves);   
-		// al_leaves = al_leaves.split(/\r?\n/);        // read file with a wallets list (1 per line)
+		// Create AL root		
+		let al_leaves = "";
+		await fetch('/al.txt')
+		.then((r) => r.text())
+		.then(text  => {
+			al_leaves = text;
+		})  
+		console.log("al_leaves =   ", al_leaves);   
+		al_leaves = al_leaves.split(/\r?\n/);       
 		
 		console.log("al_leaves =   ", al_leaves);    
 		al_leaves = al_leaves.map(x => keccak(x))     
 		console.log("al_leaves =   ", al_leaves);                                                      
-		const al_tree = new MerkleTree(al_leaves, keccak, { sortPairs: true })      // { sortPairs: true } should be set! In other case contract merke library will not be able to check it in correct way
+		const al_tree = new MerkleTree(al_leaves, keccak, { sortPairs: true })     
 		console.log("al_tree =   ", al_tree);
-		let al_leaf = keccak(testingAddress)              // generate keccak from wallet we want to check
-		let al_proof=al_tree.getHexProof(al_leaf)                                       // get proof for the leaf                     // returns true or false
-
+		let al_leaf = keccak(testingAddress);             
+		let al_proof=al_tree.getHexProof(al_leaf);                                       
+		let al_root = al_tree.getRoot().toString('hex')
 		//////// To check if wallet is in whitelist on the contract side:
-		isIn = await publicSaleContract.methods.isInALMerkleTree(testingAddress, al_proof).call(); // please note that you should call it with wallet address, not keccak(wallet), use isInFreeMerkleTree to check the free mint list instead
-		console.log("aaaaaaaaa  isIn = ", isIn);
+		isIn = await saleContract.methods.isInALMerkleTree(testingAddress, al_proof).call(); 
+		console.log("aaaaaaaaa  isIn = ", isIn, "al_root = ", al_root);
 		return {
 			success: true,
 			value: isIn,
@@ -240,10 +230,10 @@ export const isInALWL = async (globalWeb3, testingAddress) => {
 	}
 }
 
-export const getAlSalePrice = async (globalWeb3) => {
+export const getAlSalePrice = async () => {
 	let maintokenContract;
 	try {
-		maintokenContract = new globalWeb3.eth.Contract(saleContractABI, SALE_CONTRACT_ADDRESS);
+		maintokenContract = new ethWeb3.eth.Contract(saleContractABI, SALE_CONTRACT_ADDRESS);
 	}
 	catch (error) {
 		return {
@@ -268,10 +258,10 @@ export const getAlSalePrice = async (globalWeb3) => {
 	}
 }
 
-export const getAlDayOneSalePrice = async (globalWeb3) => {
+export const getAlDayOneSalePrice = async () => {
 	let maintokenContract;
 	try {
-		maintokenContract = new globalWeb3.eth.Contract(saleContractABI, SALE_CONTRACT_ADDRESS);
+		maintokenContract = new ethWeb3.eth.Contract(saleContractABI, SALE_CONTRACT_ADDRESS);
 	}
 	catch (error) {
 		return {
@@ -296,10 +286,10 @@ export const getAlDayOneSalePrice = async (globalWeb3) => {
 	}
 }
 
-export const getMaxPerWallet = async (globalWeb3) => {
-	let maintokenContract;
+export const getMaxPerWallet = async () => {
+	let maintokenContract;	
 	try {
-		maintokenContract = new globalWeb3.eth.Contract(saleContractABI, SALE_CONTRACT_ADDRESS);
+		maintokenContract = new ethWeb3.eth.Contract(saleContractABI, SALE_CONTRACT_ADDRESS);
 	}
 	catch (error) {
 		return {
@@ -324,30 +314,30 @@ export const getMaxPerWallet = async (globalWeb3) => {
 	}
 }
 
-export const getRecentWinners = async (limit=7) => {	
-	let entries = [];
-	await axios({
-		method: "post",
-		url: `${BACKEND_URL}/api/Winning/recentWinners`,
-		data: {
-			limit
-		}
-	}).then((res) => {
-		console.log("[interact.js getRecentWinners()] res = ", res);		
-		if(res.status === 200) 
-		{
-			entries = res.data.data || [];
-		}
-	})
-	.catch((error) => {
+export const getMintedByWallet = async (accountStr) => {
+	let saleContract;
+	try {
+		saleContract = new ethWeb3.eth.Contract(saleContractABI, SALE_CONTRACT_ADDRESS);				
+	}
+	catch (error) {
 		return {
 			success: false,
-			value: [],
-			message: error.message
+			value: false,
+			message: "Contract instance creation is failed"
 		}
-	});
-	return {
-		success: true,
-		value: entries,
+	}
+	try {
+		let value = await saleContract.methods.getMintedByWallet(accountStr).call();
+		return {
+			success: true,
+			value
+		};
+	}
+	catch (error) {
+		return {
+			success: false,
+			value: {},
+			message: error.message.toString()
+		}
 	}
 }

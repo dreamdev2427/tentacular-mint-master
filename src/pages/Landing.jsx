@@ -20,19 +20,13 @@ const Landing = () => {
   const [alDayOneSalePrice, setAlDayOneSalePrice] = useState(0);
   const [maxPerWallet, setMaxPerWallet] = useState(3);
 
-  const fetchAllNecessaryValues  = async () => {
-    if(globalAccount && globalWeb3)
-    {
-      if(globalChainId !== ETHEREUM_CHAIN_ID) {      
-        NotificationManager.warning("Please connect your wallet to Ethereum network and retry", 'Warning', 5000, () => {});
-        return;
-      }
+  const fetchAllNecessaryValues  = async () => {      
       let promiseArr = [];
-      promiseArr.push(getSoldTotal(globalWeb3));
-      promiseArr.push(getPublicSalePrice(globalWeb3));
-      promiseArr.push(getAlSalePrice(globalWeb3));
-      promiseArr.push(getAlDayOneSalePrice(globalWeb3));
-      promiseArr.push(getMaxPerWallet(globalWeb3));
+      promiseArr.push(getSoldTotal());
+      promiseArr.push(getPublicSalePrice());
+      promiseArr.push(getAlSalePrice());
+      promiseArr.push(getAlDayOneSalePrice());
+      promiseArr.push(getMaxPerWallet());
       Promise.all(promiseArr)
       .then((values) => {
         if(values[0].success === true) setSoldTotal(values[0].value);
@@ -44,11 +38,13 @@ const Landing = () => {
       .catch((error) => {
 
       })
-    }
   }
   
   useEffect(() => {
     if (globalAccount) {
+      if(globalChainId !== ETHEREUM_CHAIN_ID) {      
+        NotificationManager.warning("Please connect your wallet to Ethereum network and retry", 'Warning', 5000, () => {});
+      }
       fetchAllNecessaryValues();
     }
   }, [globalAccount]);
@@ -78,24 +74,26 @@ const Landing = () => {
         return;        
       }
       //verify lists    
+      /* /////////
+      getMintedByWallet(wallet) will return you uint[2]
+      [0] - minted on public + minted on AL stage
+      [1] - minted on free mint
+      3 in total - max
+      ///////// */
       try{
         let returnObject = {}; 
-        returnObject = await  isInALWL(globalWeb3, "0x7F8441658f7D1A1f0694e07344fdA6f250E1BfB5");
-        if(returnObject.success == true) { 
-          //do AL sale
-          NotificationManager.success("You can do AL sale", 'Success', 10000, async () => {      
-          });
-        }else{
-          NotificationManager.warning(returnObject.message, 'Error', 10000, async () => {      
-          });
-        }
-        return;
-        returnObject = await doPublicMint(globalWeb3, globalAccount, numberState, publicSalePrice);
-        if(returnObject.success === true) { 
-          NotificationManager.success("You 've successfully minted some NFTs.", 'Success', 10000, updateTotal() );
-          setTimeout( () => { 
-            updateTotal();
-          }, 10000);
+        returnObject = await  isInALWL(globalWeb3, globalAccount);
+        if(returnObject.success == true && returnObject.value == true ) { 
+          returnObject = await doPublicMint(globalWeb3, globalAccount, numberState, publicSalePrice);
+          if(returnObject.success === true) { 
+            NotificationManager.success("You 've successfully minted some NFTs.", 'Success', 10000, updateTotal() );
+            setTimeout( () => { 
+              updateTotal();
+            }, 10000);
+          }else{
+            NotificationManager.warning(returnObject.message, 'Error', 10000, async () => {      
+            });
+          }
         }else{
           NotificationManager.warning(returnObject.message, 'Error', 10000, async () => {      
           });
