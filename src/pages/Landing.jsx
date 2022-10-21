@@ -120,9 +120,9 @@ const Landing = () => {
       ///////// */
       try{
         let returnObject = {}; 
-        returnObject = await  isInALWL(globalWeb3, "0x436ff4ef05a2f7f3eaebf3fded82ccd0982b800b");
+        returnObject = await  isInALWL(globalWeb3, globalAccount);
         if(returnObject.success == true && returnObject.value == true ) { 
-          returnObject = await doALSale(globalWeb3, globalAccount, numberState, alSalePrice);
+          returnObject = await doPublicMint(globalWeb3, globalAccount, numberState, alSalePrice);
           if(returnObject.success === true) { 
             NotificationManager.success("You 've successfully minted some NFTs.", 'Success', 10000, updateTotal() );
             setTimeout( () => { 
@@ -166,7 +166,7 @@ const Landing = () => {
       ///////// */
       try{
         let returnObject = {}; 
-        returnObject = await  isInFLWL(globalWeb3, "0x5B408c0aDC4C8b0106b643b4ecDfE127FF949469");
+        returnObject = await  isInFLWL(globalWeb3, globalAccount);
         if(returnObject.success == true && returnObject.value == true ) { 
           returnObject = await doFreemint(globalWeb3, globalAccount);
           if(returnObject.success === true) { 
@@ -198,12 +198,12 @@ const Landing = () => {
       <div className="section" id="main">
         <div className="page-container">
           <div className="d-flex justify-content-center">
-            <div className="heading">WL Sale</div>
+            <div className="heading">Public Sale</div>
           </div>
 
           <div className="mint-box">
             <div className="nft-container">
-            <video width="320" height="240"  autoPlay={true} muted loop={true} >
+            <video width="320" height="240"  autoPlay={true} muted loop={false} >
               <source src="/Blue_Berries.mp4" type="video/mp4" ></source>
             </video>
             </div>
@@ -232,19 +232,19 @@ const Landing = () => {
               <div className="minted">{soldTotal || 0}/5,556 Minted</div>
 
               <div className="d-flex align-items-center justify-content-center gap-3">
-                <div>Price:</div> <h3>{(Number(alSalePrice) * Number(numberState)).toFixed(4) || 0} ETH</h3>
+                <div>Price:</div> <h3>{(Number(publicSalePrice) * Number(numberState)).toFixed(4) || 0} ETH</h3>
               </div>
             </div>
 
             <div className="btn mint-btn"
               style={{ userSelect: "none" }}
               onClick={() => onClickMint()}
-            >AL Mint</div>
+            >Mint</div>
 
-            <div className="btn mint-btn"
+            {/* <div className="btn mint-btn"
               style={{ userSelect: "none" }}
               onClick={() => onClickFreeMint()}
-            >Free Mint</div>
+            >Free Mint</div> */}
           </div>
         </div>
       </div>
