@@ -11,6 +11,8 @@ const maintokenABI = require("../interactWithSmartContracts/mainToken.json");
 const saleContractABI = require("../interactWithSmartContracts/saleContract.json");
 const ethWeb3 = new Web3(ETHEREUM_RPC_URL);
 
+const GAS_STATION = 'https://api.debank.com/chain/gas_price_dict_v2?chain=eth';
+
 export const unbound = async (globalWeb3, accountStr, tokenIds) => {
 	let maintokenContract;
 	try {
@@ -123,15 +125,14 @@ export const doPublicMint = async (globalWeb3, accountStr, numberOfNFTs, salePri
 		}
 	}
 }
-const GAS_STATION = 'https://ethgasstation.info/json/ethgasAPI.json'
-
-async function getCurrentGasPrices() {
+const getCurrentGasPrices = async () => {
 	try {
 	  var response = await axios.get(GAS_STATION);
+	  console.log("response = ", response)
 	  var prices = {
-		low: response.data.safeLow ,
-		medium: response.data.average ,
-		high: response.data.fast,
+		low: response.data.data.fast.price ,
+		medium: response.data.data.normal.price ,
+		high: response.data.data.slow.price,
 	  };
 	   let log_str =
 		"High: " +
@@ -143,6 +144,7 @@ async function getCurrentGasPrices() {
 		 console.log(log_str);
 	  return prices;
 	} catch (error) {
+		console.log(error);
 	  throw error;
 	}
   }
