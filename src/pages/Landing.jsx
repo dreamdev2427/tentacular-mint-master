@@ -182,9 +182,7 @@ const Landing = () => {
     <MainLayout>
       <div className="section" id="main">
         <div className="page-container">
-          <div className="d-flex justify-content-center">
-            <div className="heading">AL Sale</div>
-          </div>
+         
 
           <div className="mint-box">
             <div className="nft-container">
@@ -224,12 +222,9 @@ const Landing = () => {
             <div className="btn mint-btn"
               style={{ userSelect: "none" }}
               onClick={() => onClickMint()}
-            >AL Mint</div>
+            >Mint</div>
 
-            <div className="btn mint-btn"
-              style={{ userSelect: "none" }}
-              onClick={() => onClickFreeMint()}
-            >Free Mint</div>
+            
           </div>
         </div>
       </div>
